@@ -1,6 +1,8 @@
 -- UI Library Code for Executors
 
-local UILibrary = {}
+local UILibrary = {
+    placeholder = "hi"
+}
 UILibrary.__index = UILibrary
 
 function UILibrary.new()
@@ -191,7 +193,7 @@ end
 function UILibrary:CreateKeybind(name, defaultKey, callback)
     local Keybind = Instance.new("TextButton")
     Keybind.Size = UDim2.new(1, 0, 0, 40)
-    Keybind.Text = name .. " [" .. defaultKey.Name .. "]"
+    Keybind.Text = name .. " [" .. (defaultKey.Name or "None") .. "]"
     Keybind.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     Keybind.TextColor3 = Color3.fromRGB(255, 255, 255)
     Keybind.Font = Enum.Font.SourceSans
@@ -202,15 +204,12 @@ function UILibrary:CreateKeybind(name, defaultKey, callback)
     local Key = defaultKey or Enum.KeyCode.Unknown
     
     Keybind.MouseButton1Click:Connect(function()
-        local newKey = nil
-        local listening = true
-        
-        UserInputService.InputBegan:Connect(function(input, gameProcessed)
-            if listening and input.UserInputType == Enum.UserInputType.Keyboard and not gameProcessed then
-                newKey = input.KeyCode
-                Keybind.Text = name .. " [" .. newKey.Name .. "]"
-                listening = false
-                if callback then callback(newKey) end
+        Keybind.Text = name .. " [Press a key...]"
+        UserInputService.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Keyboard then
+                Key = input.KeyCode
+                Keybind.Text = name .. " [" .. Key.Name .. "]"
+                if callback then callback(Key) end
             end
         end)
     end)
