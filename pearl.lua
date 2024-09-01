@@ -1,12 +1,18 @@
--- UI Library Code for LocalScripts
+-- UI Library Code for Executors
 
 local UILibrary = {}
+UILibrary.__index = UILibrary
+
+function UILibrary.new()
+    local self = setmetatable({}, UILibrary)
+    return self
+end
 
 function UILibrary:CreateWindow(title)
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "CustomUILib"
     ScreenGui.ResetOnSpawn = false -- Ensure the GUI persists across respawns
-    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    ScreenGui.Parent = game:GetService("StarterGui")
     
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 300, 0, 400)
@@ -180,6 +186,34 @@ function UILibrary:CreateDropdown(name, options, callback)
             if callback then callback(option) end
         end)
     end
+end
+
+function UILibrary:CreateKeybind(name, defaultKey, callback)
+    local Keybind = Instance.new("TextButton")
+    Keybind.Size = UDim2.new(1, 0, 0, 40)
+    Keybind.Text = name .. " [" .. defaultKey.Name .. "]"
+    Keybind.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Keybind.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Keybind.Font = Enum.Font.SourceSans
+    Keybind.TextSize = 16
+    Keybind.Parent = self.Container
+    
+    local UserInputService = game:GetService("UserInputService")
+    local Key = defaultKey or Enum.KeyCode.Unknown
+    
+    Keybind.MouseButton1Click:Connect(function()
+        local newKey = nil
+        local listening = true
+        
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if listening and input.UserInputType == Enum.UserInputType.Keyboard and not gameProcessed then
+                newKey = input.KeyCode
+                Keybind.Text = name .. " [" .. newKey.Name .. "]"
+                listening = false
+                if callback then callback(newKey) end
+            end
+        end)
+    end)
 end
 
 return UILibrary
