@@ -182,43 +182,4 @@ function UILibrary:CreateDropdown(name, options, callback)
     end
 end
 
-function UILibrary:CreateKeybind(name, defaultKey, callback)
-    local Keybind = Instance.new("TextButton")
-    Keybind.Size = UDim2.new(1, 0, 0, 40)
-    Keybind.Text = name .. " [" .. defaultKey.Name .. "]"
-    Keybind.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    Keybind.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Keybind.Font = Enum.Font.SourceSans
-    Keybind.TextSize = 16
-    Keybind.Parent = self.Container
-    
-    Keybind.MouseButton1Click:Connect(function()
-        Keybind.Text = "Press a key..."
-        local connection
-        connection = game:GetService("UserInputService").InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.Keyboard then
-                Keybind.Text = name .. " [" .. input.KeyCode.Name .. "]"
-                connection:Disconnect()
-                if callback then callback(input.KeyCode) end
-            end
-        end)
-    end)
-end
-
-function UILibrary:CreateButton(name, callback)
-    local Button = Instance.new("TextButton")
-    Button.Size = UDim2.new(1, 0, 0, 40)
-    Button.Text = name
-    Button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Button.Font = Enum.Font.SourceSans
-    Button.TextSize = 16
-    Button.Parent = self.Container
-    
-    Button.MouseButton1Click:Connect(function()
-        if callback then callback() end
-    end)
-end
-
--- Returning the UILibrary table so you can use it
 return UILibrary
