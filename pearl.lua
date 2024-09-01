@@ -1,9 +1,12 @@
+-- UI Library Code for LocalScripts
+
 local UILibrary = {}
 
 function UILibrary:CreateWindow(title)
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "CustomUILib"
-    ScreenGui.Parent = game.CoreGui
+    ScreenGui.ResetOnSpawn = false -- Ensure the GUI persists across respawns
+    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
     
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 300, 0, 400)
@@ -216,3 +219,6 @@ function UILibrary:CreateButton(name, callback)
         if callback then callback() end
     end)
 end
+
+-- Returning the UILibrary table so you can use it
+return UILibrary
